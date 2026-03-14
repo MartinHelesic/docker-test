@@ -31,3 +31,11 @@ jobs:
       - name: Test HTTP endpoint
         run: curl http://localhost:8000 
 
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u martinhelesic --password-stdin
+
+      - name: Push Docker image
+        run: |
+          docker tag docker-test ghcr.io/martinhelesic/docker-test:latest
+          docker push ghcr.io/martinhelesic/docker-test:latest
+
