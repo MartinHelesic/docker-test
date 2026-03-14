@@ -18,3 +18,7 @@ jobs:
 
       - name: Check python syntax
         run: python3 -m py_compile app.py
+
+      - name: Build Docker image
+        run: docker build -t docker-test .
+
