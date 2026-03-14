@@ -1,9 +1,5 @@
 name: CI Pipeline
 
-permissions:
-  contents: read
-  packages: write
-
 on:
   push:
     branches:
@@ -12,6 +8,10 @@ on:
 jobs:
   test-app:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - name: Checkout repository
