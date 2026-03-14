@@ -36,7 +36,7 @@ jobs:
         run: curl http://localhost:8000 
 
       - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u martinhelesic --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{github.actor}} --password-stdin
 
       - name: Push Docker image
         run: |
