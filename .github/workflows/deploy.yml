@@ -12,6 +12,7 @@ jobs:
     steps:
       - name: Deploy locally on Raspberry
         run: |
+	  export DOCKER_BUILDKIT=0
 	  set -e 
 	  
 	  echo "Pull image"	
