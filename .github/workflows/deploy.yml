@@ -21,28 +21,30 @@ jobs:
           if [[ "$ACTIVE" == "docker-test-blue" ]]; then
           NEW="docker-test-green"
           OLD="docker-test-blue"
-          PORT=8005
           else
           NEW="docker-test-blue"
           OLD="docker-test-green"
-          PORT=8004
           fi
 
-          echo "Cleaning old NEW container if exists"
+          echo "Cleaning NEW container"
           docker rm -f $NEW || true
 
           echo "Pull image"
           docker pull $IMAGE
 
-          echo "Run new container"
-          docker run -d -p $PORT:8000 --name $NEW $IMAGE
+          echo "Run NEW container on random port"
+          docker run -d -p 0:8000 --name $NEW $IMAGE
 
-          echo "Waiting..."
+          PORT=$(docker port $NEW 8000 | cut -d: -f2)
+
+          echo "New container running on port $PORT"
+
           sleep 5
 
           curl localhost:$PORT
 
-          echo "Switching..."
+          echo "Stopping OLD container"
           docker rm -f $OLD || true
 
+          echo "Running containers:"
           docker ps
