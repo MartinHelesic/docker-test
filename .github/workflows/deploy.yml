@@ -16,34 +16,33 @@ jobs:
 
           IMAGE=ghcr.io/martinhelesic/docker-test:latest
 
-          # zjisti aktivní container
           ACTIVE=$(docker ps --format "{{.Names}}" | grep docker-test || true)
 
           if [[ "$ACTIVE" == "docker-test-blue" ]]; then
-            NEW="docker-test-green"
-            OLD="docker-test-blue"
-            PORT=8005
+          NEW="docker-test-green"
+          OLD="docker-test-blue"
+          PORT=8005
           else
-            NEW="docker-test-blue"
-            OLD="docker-test-green"
-            PORT=8004
+          NEW="docker-test-blue"
+          OLD="docker-test-green"
+          PORT=8004
           fi
 
-          echo "Active: $ACTIVE"
-          echo "Deploying new container: $NEW"
+          echo "Cleaning old NEW container if exists"
+          docker rm -f $NEW || true
 
+          echo "Pull image"
           docker pull $IMAGE
 
+          echo "Run new container"
           docker run -d -p $PORT:8000 --name $NEW $IMAGE
 
-          echo "Waiting for app..."
+          echo "Waiting..."
           sleep 5
 
           curl localhost:$PORT
 
-          echo "Switching traffic..."
-
-          docker stop $OLD || true
-          docker rm $OLD || true
+          echo "Switching..."
+          docker rm -f $OLD || true
 
           docker ps
