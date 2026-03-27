@@ -1,0 +1,23 @@
+name: Deploy to Raspberry Pi
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.RASPBERRY_HOST }}
+          username: raspberry
+          key: ${{ secrets.RASPBERRY_SSH_KEY }}
+          script: |
+            docker pull ghcr.io/martinhelesic/docker-test:latest
+            docker stop docker-test-ghcr || true
+            docker rm docker-test-ghcr || true
+            docker run -d -p 8004:8000 --name docker-test-ghcr ghcr.io/martinhelesic/docker-test:latest
