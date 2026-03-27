@@ -12,7 +12,19 @@ jobs:
     steps:
       - name: Deploy locally on Raspberry
         run: |
+	  set -e 
+	  
+	  echo "Pull image"	
           docker pull ghcr.io/martinhelesic/docker-test:latest
-          docker stop docker-test-ghcr || true
+          
+	  echo "Stop old container"
+	  docker stop docker-test-ghcr || true
+	  
+	  echo "Remove old container"
           docker rm docker-test-ghcr || true
+
+	  echo "Run new container"
           docker run -d -p 8004:8000 --name docker-test-ghcr ghcr.io/martinhelesic/docker-test:latest
+
+	  echo "Check running containers"
+	  docker ps 
