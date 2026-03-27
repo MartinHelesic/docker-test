@@ -10,11 +10,40 @@ jobs:
     runs-on: [self-hosted, Linux, ARM64]
 
     steps:
-      - name: Deploy locally on Raspberry
+      - name: Blue-Green Deploy
         run: |
           set -e
-          docker pull ghcr.io/martinhelesic/docker-test:latest
-          docker stop docker-test-ghcr || true
-          docker rm docker-test-ghcr || true
-          docker run -d -p 8004:8000 --name docker-test-ghcr ghcr.io/martinhelesic/docker-test:latest
+
+          IMAGE=ghcr.io/martinhelesic/docker-test:latest
+
+          # zjisti aktivní container
+          ACTIVE=$(docker ps --format "{{.Names}}" | grep docker-test || true)
+
+          if [[ "$ACTIVE" == "docker-test-blue" ]]; then
+            NEW="docker-test-green"
+            OLD="docker-test-blue"
+            PORT=8005
+          else
+            NEW="docker-test-blue"
+            OLD="docker-test-green"
+            PORT=8004
+          fi
+
+          echo "Active: $ACTIVE"
+          echo "Deploying new container: $NEW"
+
+          docker pull $IMAGE
+
+          docker run -d -p $PORT:8000 --name $NEW $IMAGE
+
+          echo "Waiting for app..."
+          sleep 5
+
+          curl localhost:$PORT
+
+          echo "Switching traffic..."
+
+          docker stop $OLD || true
+          docker rm $OLD || true
+
           docker ps
