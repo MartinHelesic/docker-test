@@ -41,7 +41,7 @@ jobs:
           sleep 5
 
           if curl -f localhost:$PORT/health; then
-            echo "Health OK"
+            echo f"\nHealth OK"
           else
             echo "Health FAILED"
             docker rm -f $NEW
