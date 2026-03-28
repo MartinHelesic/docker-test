@@ -55,6 +55,7 @@ jobs:
 
           curl localhost:$PORT
 
+          echo ""
           echo "Stopping OLD container"
           docker rm -f $OLD || true
 
