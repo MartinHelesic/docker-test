@@ -41,6 +41,7 @@ jobs:
           sleep 5
 
           if curl -f localhost:$PORT/health; then
+            echo
             echo "-----------------------------"
             echo -e "\033[32m[OK] Health passed\033[0m"
             echo "-----------------------------"
@@ -53,6 +54,7 @@ jobs:
             echo "Removing old container..."
             docker rm -f $OLD || true
           else
+            echo
             echo "-----------------------------"
             echo -e "\033[31m[ERROR] Health failed\033[0m"
             echo "-----------------------------"
