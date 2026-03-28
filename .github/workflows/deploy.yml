@@ -37,6 +37,17 @@ jobs:
 
           PORT=$(docker port $NEW 8000 | cut -d: -f2)
 
+          echo "Testing health..."
+          sleep 5
+
+          if curl -f localhost:$PORT/health; then
+            echo "Health OK"
+          else
+            echo "Health FAILED"
+            docker rm -f $NEW
+            exit 1
+          fi
+
           echo "New container running on port $PORT"
 
           sleep 5
