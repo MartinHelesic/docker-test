@@ -1,13 +1,15 @@
-from http.server import BaseHTTPRequestHandler, HTTPServer
+from flask import Flask
 
-class Handler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        self.send_response(200)
-        self.end_headers()
-        self.wfile.write(b"Hello from Docker on Raspberry Pi")
+app = Flask(__name__)
 
-server = HTTPServer(("0.0.0.0", 8000), Handler)
-server.serve_forever()
-print("change from github")
-print("feature branch change")
-print("change from clone")
+@app.route("/")
+def home():
+    return f"Hello from Docker on Raspberry Pi\n"
+
+@app.route("/health")
+def health():
+    return "OK", 200
+
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=8000)
