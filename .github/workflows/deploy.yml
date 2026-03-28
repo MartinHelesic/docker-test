@@ -41,10 +41,21 @@ jobs:
           sleep 5
 
           if curl -f localhost:$PORT/health; then
-            echo ""          
-            echo "Health OK"
+            echo "-----------------------------"
+            echo -e "\033[32m[OK] Health passed\033[0m"
+            echo "-----------------------------"
+            echo "Switching nginx..."
+
+            echo "events {} http { server { listen 80; location / { proxy_pass http://172.17.0.1:$PORT; } } }" > ~/nginx.conf
+
+            docker exec nginx-proxy nginx -s reload
+
+            echo "Removing old container..."
+            docker rm -f $OLD || true
           else
-            echo "Health FAILED"
+            echo "-----------------------------"
+            echo -e "\033[31m[ERROR] Health failed\033[0m"
+            echo "-----------------------------"
             docker rm -f $NEW
             exit 1
           fi
